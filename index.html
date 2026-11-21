@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwMzQ4MDYzODIwMjkzNzA1ODgzMyIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzBjYjBmM2Y1YzNkZWQxZmRfaW5kZXguaHRtbC0zODYifSwiZXhwIjoxNzk1Mjg5NjEzLCJpYXQiOjE3OTUyODYwMTMsImFsZyI6IlJTMjU2In0.P0xmc29-v3V7JAXWDhRAcem4aeIaraeLvElBUjoeCugyApPYgINTOtoJt4O1l8bnpwf2KE1fVtVPhO8q92r50SxadLcYS6jvTT1ofHiG270Pkvvzl2ipcZ4KFZNCrGkuIlwynqqitvLstIxwhnnoXIgOIj8VYVzuOCDZVGcP2R9WXrEWPcWjpbnvYU63oawAzLFET85pHiXzyXhCu0rChonA6P6Xyz_R6oJ72QarBnbhmrGnyKVlob-bkzVzL-99S3LqccLNFCSpbXzOZSBRl2PNdir9nQis3mogf7nKpqV5kiYuVYqhAzcckRcurbyQDsSwZapYNLGJzg1XQMQRLA","c_0cb0f3f5c3ded1fd_index.html-386")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>يوسف السعيد | بورتفوليو نتائج الإعلانات الممولة (Media Buyer)</title>
+    <!-- تحميل Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- تحميل خط Cairo و Tajawal للغة العربية -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&amp;family=Tajawal:wght@400;500;700&amp;display=swap" rel="stylesheet">
+    <!-- أيقونات Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                        },
+                        slateDark: {
+                            850: '#131c2e',
+                            900: '#0b1120',
+                            950: '#060a14',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: rgba(19, 28, 46, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .gradient-border {
+            position: relative;
+            background: linear-gradient(145deg, rgba(19, 28, 46, 0.9), rgba(11, 17, 32, 0.95));
+        }
+        .gradient-border::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(59, 130, 246, 0.2), rgba(255, 255, 255, 0.05));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+        @keyframes pulseSlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .animate-pulse-slow {
+            animation: pulseSlow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:Cairo, Tajawal, sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.bottom-0{bottom:0px}.bottom-5{bottom:1.25rem}.left-1\/2{left:50%}.left-1\/4{left:25%}.right-1\/4{right:25%}.top-0{top:0px}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-5{margin-bottom:1.25rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.mr-1{margin-right:0.25rem}.mt-0\.5{margin-top:0.125rem}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.mt-4{margin-top:1rem}.mt-7{margin-top:1.75rem}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-12{height:3rem}.h-14{height:3.5rem}.h-2{height:0.5rem}.h-6{height:1.5rem}.h-7{height:1.75rem}.h-72{height:18rem}.h-80{height:20rem}.h-auto{height:auto}.w-1\.5{width:0.375rem}.w-10{width:2.5rem}.w-12{width:3rem}.w-14{width:3.5rem}.w-2{width:0.5rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-72{width:18rem}.w-80{width:20rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-6xl{max-width:72rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-3\.5{gap:0.875rem}.gap-4{gap:1rem}.gap-5{gap:1.25rem}.gap-8{gap:2rem}.space-y-2\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.625rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.625rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-emerald-400\/30{border-color:rgb(52 211 153 / 0.3)}.border-emerald-500\/20{border-color:rgb(16 185 129 / 0.2)}.border-emerald-500\/25{border-color:rgb(16 185 129 / 0.25)}.border-emerald-500\/30{border-color:rgb(16 185 129 / 0.3)}.border-emerald-500\/40{border-color:rgb(16 185 129 / 0.4)}.border-sky-100{--tw-border-opacity:1;border-color:rgb(224 242 254 / var(--tw-border-opacity, 1))}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-300{--tw-border-opacity:1;border-color:rgb(203 213 225 / var(--tw-border-opacity, 1))}.border-slate-700{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.border-slate-700\/80{border-color:rgb(51 65 85 / 0.8)}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/80{border-color:rgb(30 41 59 / 0.8)}.bg-blue-500\/10{background-color:rgb(59 130 246 / 0.1)}.bg-blue-500\/15{background-color:rgb(59 130 246 / 0.15)}.bg-blue-500\/20{background-color:rgb(59 130 246 / 0.2)}.bg-emerald-400{--tw-bg-opacity:1;background-color:rgb(52 211 153 / var(--tw-bg-opacity, 1))}.bg-emerald-500{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.bg-emerald-500\/10{background-color:rgb(16 185 129 / 0.1)}.bg-emerald-500\/15{background-color:rgb(16 185 129 / 0.15)}.bg-emerald-500\/20{background-color:rgb(16 185 129 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-purple-500\/10{background-color:rgb(168 85 247 / 0.1)}.bg-purple-500\/15{background-color:rgb(168 85 247 / 0.15)}.bg-purple-500\/20{background-color:rgb(168 85 247 / 0.2)}.bg-sky-50{--tw-bg-opacity:1;background-color:rgb(240 249 255 / var(--tw-bg-opacity, 1))}.bg-sky-600{--tw-bg-opacity:1;background-color:rgb(2 132 199 / var(--tw-bg-opacity, 1))}.bg-slate-100{--tw-bg-opacity:1;background-color:rgb(241 245 249 / var(--tw-bg-opacity, 1))}.bg-slate-800{--tw-bg-opacity:1;background-color:rgb(30 41 59 / var(--tw-bg-opacity, 1))}.bg-slate-800\/80{background-color:rgb(30 41 59 / 0.8)}.bg-slate-900{--tw-bg-opacity:1;background-color:rgb(15 23 42 / var(--tw-bg-opacity, 1))}.bg-slate-900\/70{background-color:rgb(15 23 42 / 0.7)}.bg-slate-900\/90{background-color:rgb(15 23 42 / 0.9)}.bg-slate-950{--tw-bg-opacity:1;background-color:rgb(2 6 23 / var(--tw-bg-opacity, 1))}.bg-slate-950\/60{background-color:rgb(2 6 23 / 0.6)}.bg-slate-950\/90{background-color:rgb(2 6 23 / 0.9)}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-l{background-image:linear-gradient(to left, var(--tw-gradient-stops))}.from-emerald-400{--tw-gradient-from:#34d399 var(--tw-gradient-from-position);--tw-gradient-to:rgb(52 211 153 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-500{--tw-gradient-from:#10b981 var(--tw-gradient-from-position);--tw-gradient-to:rgb(16 185 129 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-emerald-900\/40{--tw-gradient-from:rgb(6 78 59 / 0.4) var(--tw-gradient-from-position);--tw-gradient-to:rgb(6 78 59 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-slate-900{--tw-gradient-to:#0f172a var(--tw-gradient-to-position)}.to-teal-300{--tw-gradient-to:#5eead4 var(--tw-gradient-to-position)}.to-teal-700{--tw-gradient-to:#0f766e var(--tw-gradient-to-position)}.bg-clip-text{-webkit-background-clip:text;background-clip:text}.object-contain{object-fit:contain}.p-2\.5{padding:0.625rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-1\.5{padding-left:0.375rem;padding-right:0.375rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-7{padding-left:1.75rem;padding-right:1.75rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-3\.5{padding-top:0.875rem;padding-bottom:0.875rem}.py-8{padding-top:2rem;padding-bottom:2rem}.pb-12{padding-bottom:3rem}.pb-14{padding-bottom:3.5rem}.pb-16{padding-bottom:4rem}.pb-6{padding-bottom:1.5rem}.pl-1{padding-left:0.25rem}.pr-1{padding-right:0.25rem}.pt-10{padding-top:2.5rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-black{font-weight:900}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.leading-tight{line-height:1.25}.tracking-wider{letter-spacing:0.05em}.text-amber-300{--tw-text-opacity:1;color:rgb(252 211 77 / var(--tw-text-opacity, 1))}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-emerald-400{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-emerald-700{--tw-text-opacity:1;color:rgb(4 120 87 / var(--tw-text-opacity, 1))}.text-pink-400{--tw-text-opacity:1;color:rgb(244 114 182 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-sky-400{--tw-text-opacity:1;color:rgb(56 189 248 / var(--tw-text-opacity, 1))}.text-sky-700{--tw-text-opacity:1;color:rgb(3 105 161 / var(--tw-text-opacity, 1))}.text-sky-900{--tw-text-opacity:1;color:rgb(12 74 110 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-600{--tw-text-opacity:1;color:rgb(71 85 105 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-slate-900{--tw-text-opacity:1;color:rgb(15 23 42 / var(--tw-text-opacity, 1))}.text-transparent{color:transparent}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-yellow-400{--tw-text-opacity:1;color:rgb(250 204 21 / var(--tw-text-opacity, 1))}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-emerald-500\/20{--tw-shadow-color:rgb(16 185 129 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-emerald-600\/20{--tw-shadow-color:rgb(5 150 105 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-emerald-600\/25{--tw-shadow-color:rgb(5 150 105 / 0.25);--tw-shadow:var(--tw-shadow-colored)}.blur-3xl{--tw-blur:blur(64px);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.selection\:bg-emerald-500 *::selection{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.selection\:text-white *::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.selection\:bg-emerald-500::selection{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.selection\:text-white::selection{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:-translate-y-1:hover{--tw-translate-y:-0.25rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-slate-700:hover{--tw-bg-opacity:1;background-color:rgb(51 65 85 / var(--tw-bg-opacity, 1))}.hover\:text-emerald-400:hover{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}@media (min-width: 640px){.sm\:inline{display:inline}.sm\:inline-flex{display:inline-flex}.sm\:hidden{display:none}.sm\:w-auto{width:auto}.sm\:flex-row{flex-direction:row}.sm\:gap-3{gap:0.75rem}.sm\:p-5{padding:1.25rem}.sm\:p-6{padding:1.5rem}.sm\:p-8{padding:2rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:pb-16{padding-bottom:4rem}.sm\:pt-16{padding-top:4rem}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}}@media (min-width: 768px){.md\:w-auto{width:auto}.md\:flex-none{flex:none}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:items-center{align-items:center}}@media (min-width: 1024px){.lg\:col-span-6{grid-column:span 6 / span 6}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}}</style></head>
+<body class="antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- شريط تنبيه علوي مخصص (بديل alert) -->
+    <div id="toastBanner" class="fixed bottom-5 left-1/2 -translate-x-1/2 z-50 hidden items-center gap-3 bg-emerald-600 text-white px-5 py-3 rounded-2xl shadow-2xl border border-emerald-400/30 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toastMessage" class="text-sm font-bold">تم تنفيذ العملية بنجاح</span>
+    </div>
+
+    <!-- الشريط العلوي (Navbar) -->
+    <nav class="sticky top-0 z-40 glass-card border-b border-slate-800/80">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3.5 flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center text-white font-black text-lg shadow-lg shadow-emerald-500/20">
+                    YS
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg font-extrabold text-white leading-tight">يوسف السعيد</h1>
+                    <p class="text-xs text-emerald-400 font-semibold">Media Buyer &amp; Performance Specialist</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- زر تحميل الملف الجاهز لـ GitHub Pages -->
+                <button onclick="downloadPortfolioHTML()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer" title="تحميل الصفحة كملف HTML لرفعه على GitHub Pages">
+                    <i class="fa-solid fa-download text-emerald-400"></i>
+                    <span class="hidden sm:inline">تحميل ملف GitHub</span>
+                    <span class="sm:hidden">HTML</span>
+                </button>
+
+                <!-- زر واتساب سريع -->
+                <a href="https://wa.me/201140912013?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D9%8A%D8%A7%20%D9%8A%D9%88%D8%B3%D9%81%D8%8C%20%D8%B4%D9%81%D8%AA%20%D8%A8%D9%88%D8%B1%D8%AA%D9%81%D9%88%D9%84%D9%8A%D9%88%20%D8%A7%D9%84%D9%86%D8%AA%D8%A7%D8%A6%D8%AC%20%D9%88%D8%AD%D8%A7%D8%A8%D8%A8%20%D9%86%D8%AA%D9%88%D8%A7%D8%B5%D9%84" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/25 transition">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>تواصل مباشر</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- القسم الترحيبي (Hero Section) -->
+    <header class="relative pt-10 pb-12 sm:pt-16 sm:pb-16 overflow-hidden">
+        <!-- خلفيات ضوئية جمالية -->
+        <div class="absolute top-0 right-1/4 w-72 h-72 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute bottom-0 left-1/4 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 text-center relative z-10">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 text-xs sm:text-sm font-bold mb-5">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                إدارة الحملات الإعلانية الممولة المبنية على تحليل الأرقام (Data-Driven)
+            </div>
+
+            <h2 class="text-3xl sm:text-5xl font-black text-white leading-tight mb-4">
+                يوسف السعيد — <span class="text-transparent bg-clip-text bg-gradient-to-l from-emerald-400 to-teal-300">أخصائي إعلانات ممولة</span>
+            </h2>
+
+            <p class="max-w-2xl mx-auto text-slate-300 text-sm sm:text-lg leading-relaxed mb-8">
+                تحويل الميزانيات الإعلانية إلى نتائج ملموسة ومبيعات حقيقية عبر منصات <strong class="text-white">Meta (Facebook &amp; Instagram)</strong> و <strong class="text-white">TikTok</strong> و <strong class="text-white">Snapchat</strong> بأقل تكلفة وأعلى كفاءة استهداف.
+            </p>
+
+            <!-- شارات المنصات -->
+            <div class="flex flex-wrap items-center justify-center gap-3 mb-8">
+                <span class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-bold text-slate-200">
+                    <i class="fa-brands fa-meta text-blue-400 text-base"></i> Meta Ads Manager
+                </span>
+                <span class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-bold text-slate-200">
+                    <i class="fa-brands fa-tiktok text-pink-400 text-base"></i> TikTok Ads
+                </span>
+                <span class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-700/80 text-xs sm:text-sm font-bold text-slate-200">
+                    <i class="fa-brands fa-snapchat text-yellow-400 text-base"></i> Snapchat Ads
+                </span>
+            </div>
+
+            <!-- أزرار الدعوة لاتخاذ إجراء (CTAs) -->
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+                <a href="https://wa.me/201140912013?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D9%8A%D8%A7%20%D9%8A%D9%88%D8%B3%D9%81%D8%8C%20%D8%B4%D9%81%D8%AA%20%D8%A8%D9%88%D8%B1%D8%AA%D9%81%D9%88%D9%84%D9%8A%D9%88%20%D8%A7%D9%84%D9%86%D8%AA%D8%A7%D8%A6%D8%AC%20%D9%88%D8%AD%D8%A7%D8%A8%D8%A8%20%D9%86%D8%AA%D9%88%D8%A7%D8%B5%D9%84" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto flex items-center justify-center gap-2.5 bg-emerald-600 hover:bg-emerald-500 text-white px-7 py-3.5 rounded-2xl font-extrabold text-sm sm:text-base shadow-xl shadow-emerald-600/25 transition">
+                    <i class="fa-brands fa-whatsapp text-xl"></i>
+                    <span>ابدأ حملتك الآن (01140912013)</span>
+                </a>
+                <a href="#campaign-proof" class="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 px-6 py-3.5 rounded-2xl font-bold text-sm sm:text-base transition">
+                    <i class="fa-solid fa-chart-line text-emerald-400"></i>
+                    <span>استعراض إثباتات النتائج</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- قسم ملخص المؤشرات الرئيسية (KPI Summary Cards) -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-14">
+        <div class="flex items-center justify-between mb-6">
+            <div>
+                <h3 class="text-xl sm:text-2xl font-extrabold text-white">ملخص الأداء والإحصائيات</h3>
+                <p class="text-xs sm:text-sm text-slate-400 mt-1">أرقام حقيقية مستخرجة مباشرة من حسابات مدير الإعلانات</p>
+            </div>
+            <span class="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1.5 rounded-xl">
+                <i class="fa-solid fa-shield-check"></i> نتائج موثقة بالصور
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <!-- البطاقة الأولى: حملة الرسائل -->
+            <div class="gradient-border rounded-2xl p-6 shadow-xl hover:-translate-y-1 transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-3 py-1 rounded-lg bg-blue-500/15 text-blue-400 text-xs font-bold">
+                        حملة رسائل (Messages)
+                    </span>
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
+                        <i class="fa-solid fa-comments text-lg"></i>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <span class="text-3xl sm:text-4xl font-black text-white">7,200+</span>
+                    <span class="text-sm font-bold text-slate-300 mr-1">محادثة بدأت</span>
+                </div>
+                <p class="text-sm text-emerald-400 font-bold mb-4">
+                    متوسط التكلفة: <span class="text-base">2.61 ج.م</span> للمحادثة فقط
+                </p>
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                    <span>المبلغ المنفق: <strong class="text-slate-200">18,920 ج.م</strong></span>
+                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md">أداء +9 نقاط</span>
+                </div>
+            </div>
+
+            <!-- البطاقة الثانية: حملة مشاهدات الفيديو والتفاعل -->
+            <div class="gradient-border rounded-2xl p-6 shadow-xl hover:-translate-y-1 transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-3 py-1 rounded-lg bg-purple-500/15 text-purple-400 text-xs font-bold">
+                        تفاعل ومشاهدات (Engagement)
+                    </span>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
+                        <i class="fa-solid fa-play text-lg"></i>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <span class="text-3xl sm:text-4xl font-black text-white">3.8 مليون</span>
+                    <span class="text-sm font-bold text-slate-300 mr-1">مشاهدة فيديو</span>
+                </div>
+                <p class="text-sm text-emerald-400 font-bold mb-4">
+                    التكلفة: <span class="text-base">0.00883 ج.م</span> للمشاهدة (ثانيتين)
+                </p>
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                    <span>المبلغ المنفق: <strong class="text-slate-200">33,470 ج.م</strong></span>
+                    <span class="text-emerald-400 font-bold flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> نشطة
+                    </span>
+                </div>
+            </div>
+
+            <!-- البطاقة الثالثة: إجمالي الصرف الموثق في النماذج -->
+            <div class="gradient-border rounded-2xl p-6 shadow-xl hover:-translate-y-1 transition duration-300">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="px-3 py-1 rounded-lg bg-emerald-500/15 text-emerald-400 text-xs font-bold">
+                        كفاءة إدارة الميزانية
+                    </span>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
+                        <i class="fa-solid fa-sack-dollar text-lg"></i>
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <span class="text-3xl sm:text-4xl font-black text-white">+52.39</span>
+                    <span class="text-sm font-bold text-slate-300 mr-1">ألف ج.م صرف</span>
+                </div>
+                <p class="text-sm text-slate-300 font-medium mb-4">
+                    إجمالي الصرف في النموذجين المعروضين بتحسين مستمر (Optimization)
+                </p>
+                <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                    <span>استهداف عالي الدقة</span>
+                    <span class="text-blue-400 font-bold">ROI / ROAS Focus</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم إثبات النتائج من مدير الإعلانات (Campaign Proof) -->
+    <section id="campaign-proof" class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        <div class="glass-card rounded-3xl p-5 sm:p-8 border border-slate-800 shadow-2xl">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+                <div>
+                    <div class="inline-flex items-center gap-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-1">
+                        <i class="fa-solid fa-camera"></i> Ads Manager Verification
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-extrabold text-white">إثبات النتائج من مدير الإعلانات (Campaign Proof)</h3>
+                    <p class="text-xs sm:text-sm text-slate-400 mt-1">لقطات شاشة حية لنتائج الحملات مع تحليل تفصيلي لكل مؤشر</p>
+                </div>
+
+                <!-- أدوات التحكم في الصورة (رفع صورة حقيقية أو التبديل بين الصورة والمحاكاة البصرية) -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <label for="uploadProofInput" class="cursor-pointer inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-emerald-600/20 transition">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>إرفاق/تحديث صورة الإثبات</span>
+                    </label>
+                    <input type="file" id="uploadProofInput" accept="image/*" class="hidden" onchange="handleProofImageUpload(event)">
+                </div>
+            </div>
+
+            <!-- شبكة العرض: الصورة على اليمين + التحليل التفصيلي على اليسار -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-7 items-start">
+                
+                <!-- العمود الأيمن: عرض لقطة الشاشة (يدعم الصورة المرفوعة أو بطاقات مدير الإعلانات المطابقة تماماً للصورة) -->
+                <div class="lg:col-span-6">
+                    <div class="bg-slate-950/90 rounded-2xl p-4 border border-slate-800">
+                        <div class="flex items-center justify-between mb-3 px-1">
+                            <span class="text-xs font-bold text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-brands fa-meta text-blue-400"></i> لقطة شاشة من تطبيق Meta Ads
+                            </span>
+                            <button id="toggleViewBtn" onclick="toggleProofMode()" class="hidden text-xs text-emerald-400 hover:underline font-bold cursor-pointer">
+                                عرض البطاقات التفاعلية
+                            </button>
+                        </div>
+
+                        <!-- حاوية الصورة المرفوعة (تظهر تلقائياً عند وجود ملف WhatsApp Image 2026-11-21 at 8.07.05 PM.jpeg أو عند رفع الصورة) -->
+                        <div id="uploadedImageWrapper" class="hidden rounded-xl overflow-hidden border border-slate-700 bg-white">
+                            <img id="proofImageElement" src="WhatsApp Image 2026-11-21 at 8.07.05 PM.jpeg" alt="إثبات نتائج مدير الإعلانات - يوسف السعيد" class="w-full h-auto object-contain" onerror="handleImageFallback()">
+                        </div>
+
+                        <!-- محاكاة بصرية مطابقة 100% للقطة الشاشة المرفقة (تعمل دائماً بدون الحاجة لملف خارجي وتندمج عند التحميل) -->
+                        <div id="visualReplicaWrapper" class="space-y-4">
+                            <!-- بطاقة الحملة الأولى (مطابقة لمدير الإعلانات) -->
+                            <div class="bg-white text-slate-900 rounded-2xl p-4 sm:p-5 shadow-md border border-slate-200">
+                                <div class="flex items-start justify-between gap-3 mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-14 h-14 rounded-xl bg-slate-900 flex items-center justify-center text-white overflow-hidden shrink-0 border border-slate-300">
+                                            <i class="fa-solid fa-cat text-2xl text-amber-300"></i>
+                                        </div>
+                                        <div>
+                                            <span class="inline-block text-[11px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600 mb-1">حملة رسائل</span>
+                                            <h4 class="text-sm font-extrabold text-slate-800">حملة محادثات الماسنجر / واتساب</h4>
+                                        </div>
+                                    </div>
+                                    <span class="text-slate-400"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 text-center border-t border-slate-100 pt-3">
+                                    <div class="border-l border-slate-200 pl-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">7.2 ألف</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">محادثات تم بدؤها عبر الرسائل</div>
+                                    </div>
+                                    <div class="border-l border-slate-200 px-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">2.61 ج.م.</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">التكلفة لكل محادثة تم بدؤها عبر الرسائل</div>
+                                    </div>
+                                    <div class="pr-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">18.92 ألف ج.م.</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">المبلغ المنفق</div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 bg-sky-50 border border-sky-100 rounded-xl p-2.5 flex items-center justify-between text-sky-900">
+                                    <div class="flex items-center gap-2">
+                                        <span class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs">
+                                            <i class="fa-solid fa-arrow-up"></i>
+                                        </span>
+                                        <div class="text-xs">
+                                            <div class="font-extrabold">الحملة الإعلانية عالية الأداء</div>
+                                            <div class="text-[11px] text-sky-700">+9 من النقاط، توصية واحدة</div>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-chevron-left text-xs text-sky-700"></i>
+                                </div>
+                            </div>
+
+                            <!-- بطاقة الحملة الثانية (مطابقة لمدير الإعلانات) -->
+                            <div class="bg-white text-slate-900 rounded-2xl p-4 sm:p-5 shadow-md border border-slate-200">
+                                <div class="flex items-start justify-between gap-3 mb-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-12 h-12 rounded-xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-700 shrink-0">
+                                            <i class="fa-solid fa-eye-slash text-lg"></i>
+                                        </div>
+                                        <div>
+                                            <div class="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                                <span>نشطة • التفاعل</span>
+                                            </div>
+                                            <div class="text-xs text-slate-400 mt-0.5">(تم إخفاء اسم الحملة حفاظاً على خصوصية العميل)</div>
+                                        </div>
+                                    </div>
+                                    <span class="text-slate-400"><i class="fa-solid fa-ellipsis-vertical"></i></span>
+                                </div>
+
+                                <div class="grid grid-cols-3 gap-2 text-center border-t border-slate-100 pt-3">
+                                    <div class="border-l border-slate-200 pl-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">3.8 مليون</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">مشاهدات الفيديو المستمرة لمدة ثانيتين</div>
+                                    </div>
+                                    <div class="border-l border-slate-200 px-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">0.00883 ج.م.</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">التكلفة لكل مشاهدة مستمرة للفيديو لمدة ثانيتين</div>
+                                    </div>
+                                    <div class="pr-1">
+                                        <div class="text-base sm:text-lg font-black text-slate-900">33.47 ألف ج.م.</div>
+                                        <div class="text-[11px] text-slate-500 leading-tight mt-0.5">المبلغ المنفق</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p class="text-[11px] text-slate-400 mt-3 text-center">
+                            * يمكنك الضغط على زر <strong class="text-slate-200">"إرفاق/تحديث صورة الإثبات"</strong> بالأعلى لدمج لقطة الشاشة الحقيقية داخل الملف مباشرة قبل رفعه على GitHub.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- العمود الأيسر: شرح وتحليل الحملتين -->
+                <div class="lg:col-span-6 space-y-5">
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <span class="w-7 h-7 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center font-black text-sm">1</span>
+                            <h4 class="text-base sm:text-lg font-extrabold text-white">تحليل الحملة الأولى: توليد المحادثات والعملاء المحتملين</h4>
+                        </div>
+                        <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">النتيجة المحققة:</strong> 7,200 محادثة فعلية عبر الرسائل.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">تكلفة النتيجة:</strong> 2.61 جنيه مصري فقط لكل محادثة، وهو رقم تنافسي جداً مقارنة بمتوسط السوق.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">مؤشر الجودة من Meta:</strong> حصلت الحملة على تصنيف <span class="text-sky-400 font-bold">"الحملة الإعلانية عالية الأداء (+9 نقاط)"</span> بفضل توافق الإعلان مع الجمهور المستهدف.</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-5">
+                        <div class="flex items-center gap-2.5 mb-3">
+                            <span class="w-7 h-7 rounded-lg bg-purple-500/20 text-purple-400 flex items-center justify-center font-black text-sm">2</span>
+                            <h4 class="text-base sm:text-lg font-extrabold text-white">تحليل الحملة الثانية: الانتشار الواسع ومشاهدات الفيديو</h4>
+                        </div>
+                        <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300">
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">حجم الوصول والمشاهدة:</strong> 3.8 مليون مشاهدة فيديو مستمرة (2-Second Continuous Views).</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">كفاءة التكلفة:</strong> 0.00883 جنيه مصري للمشاهدة الواحدة (أقل من قرش واحد للمشاهدة) مع صرف 33.47 ألف جنيه.</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
+                                <span><strong class="text-white">استمرارية الأداء:</strong> الحملة ما زالت <span class="text-emerald-400 font-bold">نشطة</span> وتحقق تفاعلاً مستمراً لبناء قاعدة جماهير إعادة الاستهداف (Retargeting).</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- بطاقة التواصل السريع -->
+                    <div class="bg-gradient-to-l from-emerald-900/40 to-slate-900 border border-emerald-500/30 rounded-2xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                        <div>
+                            <h5 class="text-base font-extrabold text-white">هل تريد نتائج مماثلة لمشروعك أو فريقك؟</h5>
+                            <p class="text-xs text-slate-300 mt-1">تواصل مباشرة عبر واتساب لمناقشة تفاصيل الحملة أو فرص العمل المشترك.</p>
+                        </div>
+                        <a href="https://wa.me/201140912013?text=%D8%A3%D9%87%D9%84%D8%A7%D9%8B%20%D9%8A%D8%A7%20%D9%8A%D9%88%D8%B3%D9%81%D8%8C%20%D8%B4%D9%81%D8%AA%20%D8%A8%D9%88%D8%B1%D8%AA%D9%81%D9%88%D9%84%D9%8A%D9%88%20%D8%A7%D9%84%D9%86%D8%AA%D8%A7%D8%A6%D8%AC%20%D9%88%D8%AD%D8%A7%D8%A8%D8%A8%20%D9%86%D8%AA%D9%88%D8%A7%D8%B5%D9%84" target="_blank" rel="noopener noreferrer" class="w-full sm:w-auto shrink-0 inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-3 rounded-xl text-sm font-extrabold transition shadow-lg">
+                            <i class="fa-brands fa-whatsapp text-lg"></i>
+                            <span>واتساب: 01140912013</span>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم خطوات النشر على GitHub Pages -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
+        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                    <i class="fa-brands fa-github text-xl"></i>
+                </div>
+                <div>
+                    <h4 class="text-sm sm:text-base font-extrabold text-white">جاهز للنشر على رابطك في GitHub Pages</h4>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                        أرفق صورة لقطة الشاشة بالأعلى (سيتم دمجها تلقائياً داخل الكود)، ثم اضغط على زر التحميل للحصول على ملف <code class="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded">index.html</code> جاهز للرفع مباشرة في مستودع <code class="text-slate-200">yousef-site</code>.
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2.5 w-full md:w-auto shrink-0">
+                <button onclick="copyShareLinkText()" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer">
+                    <i class="fa-regular fa-copy text-emerald-400"></i>
+                    <span>نسخ نص المشاركة</span>
+                </button>
+                <button onclick="downloadPortfolioHTML()" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer">
+                    <i class="fa-solid fa-file-code"></i>
+                    <span>تحميل index.html</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- التذييل (Footer) -->
+    <footer class="border-t border-slate-800/80 bg-slate-950/60 py-8">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+            <div class="font-bold text-slate-300">
+                © 2026 يوسف السعيد (Yousef El Saeed) — جميع الحقوق محفوظة
+            </div>
+            <div class="flex items-center gap-4">
+                <a href="https://wa.me/201140912013" target="_blank" rel="noopener noreferrer" class="hover:text-emerald-400 transition flex items-center gap-1.5 font-bold">
+                    <i class="fa-brands fa-whatsapp text-emerald-400"></i> 01140912013
+                </a>
+                <span>•</span>
+                <span>Media Buying &amp; Paid Ads Portfolio</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- السكربت التفاعلي لإدارة رفع الصورة، التحميل، والنسخ -->
+    <script>
+        // عرض رسالة تنبيه أنيقة بدون استخدام alert()
+        function showToast(message) {
+            const banner = document.getElementById('toastBanner');
+            const text = document.getElementById('toastMessage');
+            text.textContent = message;
+            banner.classList.remove('hidden');
+            banner.classList.add('flex');
+            setTimeout(() => {
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+            }, 3500);
+        }
+
+        // التحقق من وجود ملف الصورة المرفق محلياً في نفس المجلد عند النشر
+        window.addEventListener('DOMContentLoaded', () => {
+            const img = document.getElementById('proofImageElement');
+            if (img && img.complete && img.naturalWidth > 0) {
+                document.getElementById('uploadedImageWrapper').classList.remove('hidden');
+                document.getElementById('visualReplicaWrapper').classList.add('hidden');
+                document.getElementById('toggleViewBtn').classList.remove('hidden');
+            }
+        });
+
+        // في حال عدم وجود ملف الصورة بجانب الصفحة، يتم عرض البطاقات التفاعلية تلقائياً
+        function handleImageFallback() {
+            document.getElementById('uploadedImageWrapper').classList.add('hidden');
+            document.getElementById('visualReplicaWrapper').classList.remove('hidden');
+        }
+
+        // عند اختيار المستخدم لصورة لقطة الشاشة من جهازه، يتم دمجها وعرضها فوراً
+        function handleProofImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgEl = document.getElementById('proofImageElement');
+                imgEl.src = e.target.result;
+                document.getElementById('uploadedImageWrapper').classList.remove('hidden');
+                document.getElementById('visualReplicaWrapper').classList.add('hidden');
+                document.getElementById('toggleViewBtn').classList.remove('hidden');
+                showToast('تم إرفاق صورة الإثبات بنجاح! يمكنك الآن تحميل الملف الجاهز.');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // التبديل بين الصورة المرفوعة والبطاقات التفاعلية
+        function toggleProofMode() {
+            const imgWrap = document.getElementById('uploadedImageWrapper');
+            const repWrap = document.getElementById('visualReplicaWrapper');
+            const btn = document.getElementById('toggleViewBtn');
+
+            if (imgWrap.classList.contains('hidden')) {
+                imgWrap.classList.remove('hidden');
+                repWrap.classList.add('hidden');
+                btn.textContent = 'عرض البطاقات التفاعلية';
+            } else {
+                imgWrap.classList.add('hidden');
+                repWrap.classList.remove('hidden');
+                btn.textContent = 'عرض الصورة المرفقة';
+            }
+        }
+
+        // تحميل الصفحة كملف index.html جاهز للرفع على GitHub Pages
+        function downloadPortfolioHTML() {
+            try {
+                // إخفاء شريط التنبيه قبل أخذ نسخة الكود
+                const banner = document.getElementById('toastBanner');
+                banner.classList.add('hidden');
+                banner.classList.remove('flex');
+
+                const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+                const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'index.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('تم تحميل ملف index.html بنجاح! ارفعه مباشرة على GitHub.');
+            } catch (err) {
+                showToast('حدث خطأ أثناء تجهيز الملف للتحميل.');
+            }
+        }
+
+        // نسخ نص جاهز لمشاركة رابط البورتفوليو في الجروبات أو مع العملاء
+        function copyShareLinkText() {
+            const shareText = `بورتفوليو نتائج الإعلانات الممولة (يوسف السعيد):\n🔹 7,200+ محادثة بتكلفة 2.61 ج.م للمحادثة\n🔹 3.8 مليون مشاهدة فيديو بتكلفة 0.0088 ج.م\n\nشاهد الإحصائيات وإثباتات مدير الإعلانات من هنا:\nhttps://yousef-elsaeed.github.io/yousef-site/\n\nللتواصل واتساب: 01140912013`;
+            const tempInput = document.createElement('textarea');
+            tempInput.value = shareText;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
+            showToast('تم نسخ نص المشاركة بالرابط بنجاح!');
+        }
+    </script>
+
+</body></html>
