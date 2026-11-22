@@ -1230,15 +1230,15 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">7,200+</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr" data-summary="messaging-results">—</span>
                     <span class="text-sm font-bold text-slate-300 mr-1">محادثة بدأت</span>
                 </div>
                 <p class="text-sm text-emerald-400 font-bold mb-4">
-                    متوسط التكلفة: <span class="ads-number text-base" dir="ltr">2.61 ج.م</span> للمحادثة فقط
+                    متوسط التكلفة: <span class="ads-number text-base" dir="ltr" data-summary="messaging-average">—</span> للمحادثة فقط
                 </p>
-                <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr">18,920 ج.م</strong></span>
-                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md">أداء +9 نقاط</span>
+                <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr" data-summary="messaging-spent">—</strong></span>
+                    <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md">إجمالي الحملات</span>
                 </div>
             </div>
 
@@ -1253,14 +1253,14 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">3.8 مليون</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr" data-summary="video-results">—</span>
                     <span class="text-sm font-bold text-slate-300 mr-1">مشاهدة فيديو</span>
                 </div>
                 <p class="text-sm text-emerald-400 font-bold mb-4">
-                    التكلفة: <span class="ads-number text-base" dir="ltr">0.00883 ج.م</span> للمشاهدة (ثانيتين)
+                    متوسط التكلفة: <span class="ads-number text-base" dir="ltr" data-summary="video-average">—</span> للمشاهدة (ثانيتين)
                 </p>
-                <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr">33,470 ج.م</strong></span>
+                <div class="pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-400">
+                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr" data-summary="video-spent">—</strong></span>
                     <span class="text-emerald-400 font-bold flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> نشطة
                     </span>
@@ -1278,11 +1278,11 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">+52.39</span>
-                    <span class="text-sm font-bold text-slate-300 mr-1">ألف ج.م صرف</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr" data-summary="total-spent">—</span>
+                    <span class="text-sm font-bold text-slate-300 mr-1">إجمالي الصرف</span>
                 </div>
                 <p class="text-sm text-slate-300 font-medium mb-4">
-                    إجمالي الصرف في النموذجين المعروضين بتحسين مستمر (Optimization)
+                    إجمالي المنفق على حملات الرسايل ومشاهدات الفيديو مع خصم أي تكرار للحملة.
                 </p>
                 <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
                     <span>استهداف عالي الدقة</span>
@@ -1392,26 +1392,92 @@ button[onclick*="github"],
         }
 
         const messagingCampaignCards = [
-            { result: '27.3 ألف', cost: '2.68 ج.م.', spent: '72.96 ألف ج.م.' },
-            { result: '22.3 ألف', cost: '2.44 ج.م.', spent: '54.52 ألف ج.م.' },
-            { result: '2.2 ألف', cost: '2.88 ج.م.', spent: '6.48 ألف ج.م.' },
-            { result: '4.3 ألف', cost: '3.18 ج.م.', spent: '13.82 ألف ج.م.' },
-            { result: '10.1 ألف', cost: '3.43 ج.م.', spent: '34.47 ألف ج.م.' },
-            { result: '7.7 ألف', cost: '2.58 ج.م.', spent: '19.82 ألف ج.م.' },
-            { result: '3.2 ألف', cost: '4.97 ج.م.', spent: '15.97 ألف ج.م.' },
-            { result: '3.7 ألف', cost: '2.70 ج.م.', spent: '9.94 ألف ج.م.' },
-            { result: '1.7 ألف', cost: '3.45 ج.م.', spent: '5.97 ألف ج.م.' }
+            { id: 'message-01', result: '27.3 ألف', cost: '2.68 ج.م.', spent: '72.96 ألف ج.م.' },
+            { id: 'message-02', result: '22.3 ألف', cost: '2.44 ج.م.', spent: '54.52 ألف ج.م.' },
+            { id: 'message-03', result: '2.2 ألف', cost: '2.88 ج.م.', spent: '6.48 ألف ج.م.' },
+            { id: 'message-04', result: '4.3 ألف', cost: '3.18 ج.م.', spent: '13.82 ألف ج.م.' },
+            { id: 'message-05', result: '10.1 ألف', cost: '3.43 ج.م.', spent: '34.47 ألف ج.م.' },
+            { id: 'message-06', result: '7.7 ألف', cost: '2.58 ج.م.', spent: '19.82 ألف ج.م.' },
+            { id: 'message-07', result: '3.2 ألف', cost: '4.97 ج.م.', spent: '15.97 ألف ج.م.' },
+            { id: 'message-08', result: '3.7 ألف', cost: '2.70 ج.م.', spent: '9.94 ألف ج.م.' },
+            { id: 'message-09', result: '1.7 ألف', cost: '3.45 ج.م.', spent: '5.97 ألف ج.م.' }
         ];
         const videoCampaignCards = [
-            { result: '2 مليون', cost: '0.00773 ج.م.', spent: '15.59 ألف ج.م.' },
-            { result: '2 مليون', cost: '0.00808 ج.م.', spent: '16.20 ألف ج.م.' },
-            { result: '2 مليون', cost: '0.00857 ج.م.', spent: '16.97 ألف ج.م.' },
-            { result: '3.9 مليون', cost: '0.00881 ج.م.', spent: '34.09 ألف ج.م.' },
-            { result: '8.6 مليون', cost: '0.00830 ج.م.', spent: '71.07 ألف ج.م.' },
-            { result: '304.4 ألف', cost: '0.00951 ج.م.', spent: '2.89 ألف ج.م.' },
-            { result: '9.1 مليون', cost: '0.01 ج.م.', spent: '91.60 ألف ج.م.' },
-            { result: '3.9 مليون', cost: '0.00790 ج.م.', spent: '30.54 ألف ج.م.' }
+            { id: 'video-01', result: '2 مليون', cost: '0.00773 ج.م.', spent: '15.59 ألف ج.م.' },
+            { id: 'video-02', result: '2 مليون', cost: '0.00808 ج.م.', spent: '16.20 ألف ج.م.' },
+            { id: 'video-03', result: '2 مليون', cost: '0.00857 ج.م.', spent: '16.97 ألف ج.م.' },
+            { id: 'video-04', result: '3.9 مليون', cost: '0.00881 ج.م.', spent: '34.09 ألف ج.م.' },
+            { id: 'video-05', result: '8.6 مليون', cost: '0.00830 ج.م.', spent: '71.07 ألف ج.م.' },
+            { id: 'video-06', result: '304.4 ألف', cost: '0.00951 ج.م.', spent: '2.89 ألف ج.م.' },
+            { id: 'video-07', result: '9.1 مليون', cost: '0.01 ج.م.', spent: '91.60 ألف ج.م.' },
+            { id: 'video-08', result: '3.9 مليون', cost: '0.00790 ج.م.', spent: '30.54 ألف ج.م.' }
         ];
+
+        function parseCampaignValue(value) {
+            const number = Number(String(value).replace(/,/g, '').match(/-?\d+(?:\.\d+)?/)?.[0] || 0);
+            const multiplier = /مليون/.test(value) ? 1000000 : /ألف/.test(value) ? 1000 : 1;
+            return Number.isFinite(number) ? number * multiplier : 0;
+        }
+
+        function uniqueCampaigns(cards) {
+            const seen = new Set();
+            return cards.filter(card => {
+                const key = card.id || `${card.result}|${card.cost}|${card.spent}`;
+                if (seen.has(key)) return false;
+                seen.add(key);
+                return true;
+            });
+        }
+
+        function formatMetricCount(value) {
+            if (value >= 1000000) {
+                return `${Number((value / 1000000).toFixed(2)).toLocaleString('en-US')} مليون`;
+            }
+            if (value >= 1000) {
+                return `${Number((value / 1000).toFixed(2)).toLocaleString('en-US')} ألف`;
+            }
+            return Number(value.toFixed(0)).toLocaleString('en-US');
+        }
+
+        function formatCampaignMoney(value) {
+            if (value >= 1000000) {
+                return `${(value / 1000000).toFixed(2)} مليون ج.م.`;
+            }
+            if (value >= 1000) {
+                return `${(value / 1000).toFixed(2)} ألف ج.م.`;
+            }
+            return `${Number(value.toFixed(2)).toLocaleString('en-US')} ج.م.`;
+        }
+
+        function formatAverageCost(value, video) {
+            return `${value.toFixed(video ? 5 : 2)} ج.م.`;
+        }
+
+        function updatePerformanceSummary() {
+            const messageCards = uniqueCampaigns(messagingCampaignCards);
+            const videoCards = uniqueCampaigns(videoCampaignCards);
+            const aggregate = cards => cards.reduce((total, card) => {
+                total.results += parseCampaignValue(card.result);
+                total.spent += parseCampaignValue(card.spent);
+                return total;
+            }, { results: 0, spent: 0 });
+            const messages = aggregate(messageCards);
+            const videos = aggregate(videoCards);
+            const values = {
+                'messaging-results': formatMetricCount(messages.results),
+                'messaging-average': formatAverageCost(messages.results ? messages.spent / messages.results : 0, false),
+                'messaging-spent': formatCampaignMoney(messages.spent),
+                'video-results': formatMetricCount(videos.results),
+                'video-average': formatAverageCost(videos.results ? videos.spent / videos.results : 0, true),
+                'video-spent': formatCampaignMoney(videos.spent),
+                'total-spent': formatCampaignMoney(messages.spent + videos.spent)
+            };
+            Object.entries(values).forEach(([key, value]) => {
+                document.querySelectorAll(`[data-summary="${key}"]`).forEach(element => {
+                    element.textContent = value;
+                });
+            });
+        }
 
         function createMetaProofCard(card, isVideo) {
             const metric = isVideo ? 'مشاهدات الفيديو المستمرة لمدة ثانيتين' : 'محادثات تم بدؤها عبر الرسائل';
@@ -1560,6 +1626,7 @@ button[onclick*="github"],
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            updatePerformanceSummary();
             document.querySelectorAll('[data-proof-carousel]').forEach(initProofCarousel);
         });
 
