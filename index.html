@@ -1385,9 +1385,6 @@ button[onclick*="github"],
                             </div>
                         </div>
 
-                        <p class="text-[11px] text-slate-400 mt-3 text-center">
-                            * يمكنك الضغط على زر <strong class="text-slate-200">"إرفاق/تحديث صورة الإثبات"</strong> بالأعلى لدمج لقطة الشاشة الحقيقية داخل الملف مباشرة قبل رفعه على GitHub.
-                        </p>
                     </div>
                 </div>
 
@@ -1448,29 +1445,6 @@ button[onclick*="github"],
                     </div>
                 </div>
 
-            </div>
-        </div>
-    </section>
-
-    <!-- قسم خطوات النشر على GitHub Pages -->
-    <section class="max-w-6xl mx-auto px-4 sm:px-6 pb-16">
-        <div class="bg-slate-900/70 border border-slate-800 rounded-2xl p-5 sm:p-6 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-start gap-3.5">
-                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
-                    <i class="fa-brands fa-github text-xl"></i>
-                </div>
-                <div>
-                    <h4 class="text-sm sm:text-base font-extrabold text-white">جاهز للنشر على رابطك في GitHub Pages</h4>
-                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">
-                        أرفق صورة لقطة الشاشة بالأعلى (سيتم دمجها تلقائياً داخل الكود)، ثم اضغط على زر التحميل للحصول على ملف <code class="text-emerald-400 bg-slate-950 px-1.5 py-0.5 rounded">index.html</code> جاهز للرفع مباشرة في مستودع <code class="text-slate-200">yousef-site</code>.
-                    </p>
-                </div>
-            </div>
-            <div class="flex items-center gap-2.5 w-full md:w-auto shrink-0">
-                <button onclick="copyShareLinkText()" class="flex-1 md:flex-none flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 px-4 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer">
-                    <i class="fa-regular fa-copy text-emerald-400"></i>
-                    <span>نسخ نص المشاركة</span>
-                </button>
             </div>
         </div>
     </section>
@@ -1734,17 +1708,6 @@ button[onclick*="github"],
             document.querySelectorAll('[data-carousel]').forEach(initAutoCarousel);
         });
 
-        // نسخ نص جاهز لمشاركة رابط البورتفوليو في الجروبات أو مع العملاء
-        function copyShareLinkText() {
-            const shareText = `بورتفوليو نتائج الإعلانات الممولة (يوسف السعيد):\n🔹 7,200+ محادثة بتكلفة 2.61 ج.م للمحادثة\n🔹 3.8 مليون مشاهدة فيديو بتكلفة 0.0088 ج.م\n\nشاهد الإحصائيات وإثباتات مدير الإعلانات من هنا:\nhttps://yousef-elsaeed.github.io/yousef-site/\n\nللتواصل واتساب: 01140912013`;
-            const tempInput = document.createElement('textarea');
-            tempInput.value = shareText;
-            document.body.appendChild(tempInput);
-            tempInput.select();
-            document.execCommand('copy');
-            document.body.removeChild(tempInput);
-            showToast('تم نسخ نص المشاركة بالرابط بنجاح!');
-        }
     </script>
 
 </body></html>
