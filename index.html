@@ -898,6 +898,45 @@ button[onclick*="github"],
             position: relative;
             overflow: hidden;
         }
+        .ads-proof-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+            direction: ltr;
+        }
+        .ads-proof-layout > * { direction: rtl; }
+        .ads-carousel-column { min-width: 0; }
+        .ads-insight-panel {
+            border: 1px solid rgba(71, 85, 105, 0.75);
+            border-radius: 22px;
+            background:
+                linear-gradient(145deg, rgba(15, 23, 42, 0.98), rgba(17, 24, 39, 0.96)),
+                radial-gradient(circle at top right, rgba(16, 185, 129, 0.14), transparent 45%);
+            padding: 20px;
+        }
+        .ads-insight-panel[aria-live] { min-height: 220px; }
+        .ads-number {
+            direction: ltr !important;
+            unicode-bidi: isolate;
+            white-space: nowrap !important;
+            display: inline-flex;
+            max-width: 100%;
+            padding: 0.15rem 0.3rem;
+            line-height: 1.45;
+            vertical-align: middle;
+            font-variant-numeric: tabular-nums;
+        }
+        .ads-card-heading {
+            padding: 0.15rem 0.25rem;
+        }
+        @media (min-width: 1024px) {
+            .ads-proof-layout {
+                grid-template-columns: minmax(0, 2fr) minmax(270px, 0.8fr);
+                align-items: stretch;
+            }
+            .ads-carousel-column { grid-column: 2; }
+            .ads-insight-panel { grid-column: 1; }
+        }
         .ads-carousel-viewport {
             overflow-x: auto;
             overflow-y: hidden;
@@ -1086,17 +1125,22 @@ button[onclick*="github"],
             </div>
             <p class="text-xs text-slate-400">نتائج الحملات فقط — تم إخفاء صورة واسم الإعلان لحماية خصوصية العميل.</p>
         </div>
-        <div class="ads-carousel-shell rounded-2xl px-1 py-1" data-carousel="messaging">
-            <div class="ads-carousel-viewport rounded-2xl">
-                <div class="ads-carousel-track" role="list"></div>
+        <div class="ads-proof-layout">
+            <div class="ads-carousel-column">
+                <div class="ads-carousel-shell rounded-2xl px-1 py-1" data-carousel="messaging">
+                    <div class="ads-carousel-viewport rounded-2xl">
+                        <div class="ads-carousel-track" role="list"></div>
+                    </div>
+                    <button class="ads-carousel-button ads-carousel-prev" type="button" data-carousel-prev aria-label="السابق">
+                        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <button class="ads-carousel-button ads-carousel-next" type="button" data-carousel-next aria-label="التالي">
+                        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <div class="ads-carousel-dots" aria-label="الانتقال بين البطاقات"></div>
+                </div>
             </div>
-            <button class="ads-carousel-button ads-carousel-prev" type="button" data-carousel-prev aria-label="السابق">
-                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            </button>
-            <button class="ads-carousel-button ads-carousel-next" type="button" data-carousel-next aria-label="التالي">
-                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-            </button>
-            <div class="ads-carousel-dots" aria-label="الانتقال بين البطاقات"></div>
+            <aside class="ads-insight-panel" data-carousel-insight="messaging" aria-live="polite" aria-label="شرح نتيجة الحملة الحالية"></aside>
         </div>
     </section>
 
@@ -1113,17 +1157,22 @@ button[onclick*="github"],
             </div>
             <p class="text-xs text-slate-400">تم إخفاء اسم الحملة وصورة واسم الإعلان حفاظاً على خصوصية العميل.</p>
         </div>
-        <div class="ads-carousel-shell rounded-2xl px-1 py-1" data-carousel="video">
-            <div class="ads-carousel-viewport rounded-2xl">
-                <div class="ads-carousel-track" role="list"></div>
+        <div class="ads-proof-layout">
+            <div class="ads-carousel-column">
+                <div class="ads-carousel-shell rounded-2xl px-1 py-1" data-carousel="video">
+                    <div class="ads-carousel-viewport rounded-2xl">
+                        <div class="ads-carousel-track" role="list"></div>
+                    </div>
+                    <button class="ads-carousel-button ads-carousel-prev" type="button" data-carousel-prev aria-label="السابق">
+                        <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+                    </button>
+                    <button class="ads-carousel-button ads-carousel-next" type="button" data-carousel-next aria-label="التالي">
+                        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <div class="ads-carousel-dots" aria-label="الانتقال بين البطاقات"></div>
+                </div>
             </div>
-            <button class="ads-carousel-button ads-carousel-prev" type="button" data-carousel-prev aria-label="السابق">
-                <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
-            </button>
-            <button class="ads-carousel-button ads-carousel-next" type="button" data-carousel-next aria-label="التالي">
-                <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
-            </button>
-            <div class="ads-carousel-dots" aria-label="الانتقال بين البطاقات"></div>
+            <aside class="ads-insight-panel" data-carousel-insight="video" aria-live="polite" aria-label="شرح نتيجة الحملة الحالية"></aside>
         </div>
     </section>
 
@@ -1151,14 +1200,14 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="text-3xl sm:text-4xl font-black text-white">7,200+</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">7,200+</span>
                     <span class="text-sm font-bold text-slate-300 mr-1">محادثة بدأت</span>
                 </div>
                 <p class="text-sm text-emerald-400 font-bold mb-4">
-                    متوسط التكلفة: <span class="text-base">2.61 ج.م</span> للمحادثة فقط
+                    متوسط التكلفة: <span class="ads-number text-base" dir="ltr">2.61 ج.م</span> للمحادثة فقط
                 </p>
                 <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                    <span>المبلغ المنفق: <strong class="text-slate-200">18,920 ج.م</strong></span>
+                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr">18,920 ج.م</strong></span>
                     <span class="text-emerald-400 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-md">أداء +9 نقاط</span>
                 </div>
             </div>
@@ -1174,14 +1223,14 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="text-3xl sm:text-4xl font-black text-white">3.8 مليون</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">3.8 مليون</span>
                     <span class="text-sm font-bold text-slate-300 mr-1">مشاهدة فيديو</span>
                 </div>
                 <p class="text-sm text-emerald-400 font-bold mb-4">
-                    التكلفة: <span class="text-base">0.00883 ج.م</span> للمشاهدة (ثانيتين)
+                    التكلفة: <span class="ads-number text-base" dir="ltr">0.00883 ج.م</span> للمشاهدة (ثانيتين)
                 </p>
                 <div class="pt-4 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                    <span>المبلغ المنفق: <strong class="text-slate-200">33,470 ج.م</strong></span>
+                    <span>المبلغ المنفق: <strong class="ads-number text-slate-200" dir="ltr">33,470 ج.م</strong></span>
                     <span class="text-emerald-400 font-bold flex items-center gap-1">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> نشطة
                     </span>
@@ -1199,7 +1248,7 @@ button[onclick*="github"],
                     </div>
                 </div>
                 <div class="mb-2">
-                    <span class="text-3xl sm:text-4xl font-black text-white">+52.39</span>
+                    <span class="ads-number text-3xl sm:text-4xl font-black text-white" dir="ltr">+52.39</span>
                     <span class="text-sm font-bold text-slate-300 mr-1">ألف ج.م صرف</span>
                 </div>
                 <p class="text-sm text-slate-300 font-medium mb-4">
@@ -1274,15 +1323,15 @@ button[onclick*="github"],
 
                                 <div class="grid grid-cols-3 gap-2 text-center border-t border-slate-100 pt-3">
                                     <div class="border-l border-slate-200 pl-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">7.2 ألف</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">7.2 ألف</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">محادثات تم بدؤها عبر الرسائل</div>
                                     </div>
                                     <div class="border-l border-slate-200 px-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">2.61 ج.م.</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">2.61 ج.م.</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">التكلفة لكل محادثة تم بدؤها عبر الرسائل</div>
                                     </div>
                                     <div class="pr-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">18.92 ألف ج.م.</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">18.92 ألف ج.م.</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">المبلغ المنفق</div>
                                     </div>
                                 </div>
@@ -1294,7 +1343,7 @@ button[onclick*="github"],
                                         </span>
                                         <div class="text-xs">
                                             <div class="font-extrabold">الحملة الإعلانية عالية الأداء</div>
-                                            <div class="text-[11px] text-sky-700">+9 من النقاط، توصية واحدة</div>
+                                            <div class="text-[11px] text-sky-700"><span class="ads-number" dir="ltr">+9</span> من النقاط، توصية واحدة</div>
                                         </div>
                                     </div>
                                     <i class="fa-solid fa-chevron-left text-xs text-sky-700"></i>
@@ -1321,15 +1370,15 @@ button[onclick*="github"],
 
                                 <div class="grid grid-cols-3 gap-2 text-center border-t border-slate-100 pt-3">
                                     <div class="border-l border-slate-200 pl-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">3.8 مليون</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">3.8 مليون</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">مشاهدات الفيديو المستمرة لمدة ثانيتين</div>
                                     </div>
                                     <div class="border-l border-slate-200 px-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">0.00883 ج.م.</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">0.00883 ج.م.</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">التكلفة لكل مشاهدة مستمرة للفيديو لمدة ثانيتين</div>
                                     </div>
                                     <div class="pr-1">
-                                        <div class="text-base sm:text-lg font-black text-slate-900">33.47 ألف ج.م.</div>
+                                        <div class="ads-number text-base sm:text-lg font-black text-slate-900" dir="ltr">33.47 ألف ج.م.</div>
                                         <div class="text-[11px] text-slate-500 leading-tight mt-0.5">المبلغ المنفق</div>
                                     </div>
                                 </div>
@@ -1352,11 +1401,11 @@ button[onclick*="github"],
                         <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300">
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
-                                <span><strong class="text-white">النتيجة المحققة:</strong> 7,200 محادثة فعلية عبر الرسائل.</span>
+                                <span><strong class="text-white">النتيجة المحققة:</strong> <span class="ads-number" dir="ltr">7,200</span> محادثة فعلية عبر الرسائل.</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
-                                <span><strong class="text-white">تكلفة النتيجة:</strong> 2.61 جنيه مصري فقط لكل محادثة، وهو رقم تنافسي جداً مقارنة بمتوسط السوق.</span>
+                                <span><strong class="text-white">تكلفة النتيجة:</strong> <span class="ads-number" dir="ltr">2.61 ج.م.</span> فقط لكل محادثة، وهو رقم تنافسي جداً مقارنة بمتوسط السوق.</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
@@ -1373,11 +1422,11 @@ button[onclick*="github"],
                         <ul class="space-y-2.5 text-xs sm:text-sm text-slate-300">
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
-                                <span><strong class="text-white">حجم الوصول والمشاهدة:</strong> 3.8 مليون مشاهدة فيديو مستمرة (2-Second Continuous Views).</span>
+                                <span><strong class="text-white">حجم الوصول والمشاهدة:</strong> <span class="ads-number" dir="ltr">3.8 مليون</span> مشاهدة فيديو مستمرة (<span class="ads-number" dir="ltr">2-Second</span> Continuous Views).</span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
-                                <span><strong class="text-white">كفاءة التكلفة:</strong> 0.00883 جنيه مصري للمشاهدة الواحدة (أقل من قرش واحد للمشاهدة) مع صرف 33.47 ألف جنيه.</span>
+                                <span><strong class="text-white">كفاءة التكلفة:</strong> <span class="ads-number" dir="ltr">0.00883 ج.م.</span> للمشاهدة الواحدة (أقل من قرش واحد للمشاهدة) مع صرف <span class="ads-number" dir="ltr">33.47 ألف ج.م.</span></span>
                             </li>
                             <li class="flex items-start gap-2">
                                 <i class="fa-solid fa-check text-emerald-400 mt-1"></i>
@@ -1566,20 +1615,55 @@ button[onclick*="github"],
                     </div>
                     ${isVideo ? '<p class="mt-3 text-[11px] leading-5 text-slate-500">(تم إخفاء اسم الحملة حفاظاً على خصوصية العميل)</p>' : '<p class="mt-3 text-[11px] leading-5 text-slate-500">حملة محادثات الماسنجر / واتساب</p>'}
                     <div class="mt-4 rounded-2xl border border-slate-700/70 bg-slate-950/50 p-4">
-                        <div class="text-2xl sm:text-3xl font-black text-white" dir="ltr">${card.result}</div>
+                        <div class="ads-number ads-card-heading text-2xl sm:text-3xl font-black text-white" dir="ltr">${card.result}</div>
                         <div class="mt-1 text-xs leading-5 text-slate-400">${metric}</div>
                     </div>
                     <div class="mt-3 grid grid-cols-2 gap-2.5">
                         <div class="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-3">
                             <div class="text-[11px] text-slate-400">التكلفة لكل نتيجة</div>
-                            <div class="mt-1 text-sm sm:text-base font-extrabold text-emerald-300" dir="ltr">${card.cost}</div>
+                            <div class="ads-number mt-1 text-sm sm:text-base font-extrabold text-emerald-300" dir="ltr">${card.cost}</div>
                         </div>
                         <div class="rounded-xl bg-blue-500/10 border border-blue-500/20 p-3">
                             <div class="text-[11px] text-slate-400">المبلغ المنفق</div>
-                            <div class="mt-1 text-sm sm:text-base font-extrabold text-blue-300" dir="ltr">${card.spent}</div>
+                            <div class="ads-number mt-1 text-sm sm:text-base font-extrabold text-blue-300" dir="ltr">${card.spent}</div>
                         </div>
                     </div>
                 </article>
+            `;
+        }
+
+        function renderCarouselInsight(panel, card, index, isVideo) {
+            const sequence = index + 1;
+            const metric = isVideo ? 'مشاهدة فيديو مستمرة لمدة ثانيتين' : 'محادثة بدأت عبر الرسائل';
+            const title = isVideo ? 'قراءة نتيجة الانتشار الحالية' : 'قراءة نتيجة المحادثات الحالية';
+            const explanation = isVideo
+                ? 'تعكس هذه البطاقة حجم المشاهدة المتواصل مقابل الإنفاق، وتوضح تكلفة واحدة من المشاهدات المؤهلة.'
+                : 'تعكس هذه البطاقة حجم المحادثات التي بدأت فعلياً، وتوضح كفاءة الوصول إلى عملاء محتملين مقارنة بالإنفاق.';
+            panel.innerHTML = `
+                <div class="flex items-center justify-between gap-2">
+                    <span class="rounded-full border ${isVideo ? 'border-emerald-500/25 bg-emerald-500/10 text-emerald-300' : 'border-amber-500/25 bg-amber-500/10 text-amber-300'} px-2.5 py-1 text-[11px] font-extrabold">نتيجة ${sequence}</span>
+                    <i class="fa-solid ${isVideo ? 'fa-eye ads-eye-icon text-emerald-300' : 'fa-comments text-amber-300'} text-lg" aria-hidden="true"></i>
+                </div>
+                <h4 class="mt-4 text-base font-extrabold text-white">${title}</h4>
+                <p class="mt-2 text-xs leading-6 text-slate-400">${explanation}</p>
+                <div class="mt-4 grid gap-2">
+                    <div class="rounded-xl border border-slate-700/70 bg-slate-950/45 p-3">
+                        <div class="text-[11px] text-slate-500">النتيجة المحققة</div>
+                        <span class="ads-number mt-1 text-lg font-black text-white" dir="ltr">${card.result}</span>
+                        <div class="mt-1 text-[11px] text-slate-400">${metric}</div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="rounded-xl bg-emerald-500/10 p-3">
+                            <div class="text-[11px] text-slate-500">تكلفة النتيجة</div>
+                            <span class="ads-number mt-1 text-sm font-extrabold text-emerald-300" dir="ltr">${card.cost}</span>
+                        </div>
+                        <div class="rounded-xl bg-blue-500/10 p-3">
+                            <div class="text-[11px] text-slate-500">إجمالي المنفق</div>
+                            <span class="ads-number mt-1 text-sm font-extrabold text-blue-300" dir="ltr">${card.spent}</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-3 text-[11px] leading-5 text-slate-500">(تم إخفاء اسم الحملة حفاظاً على خصوصية العميل)</p>
             `;
         }
 
@@ -1590,6 +1674,7 @@ button[onclick*="github"],
             const viewport = shell.querySelector('.ads-carousel-viewport');
             const track = shell.querySelector('.ads-carousel-track');
             const dots = shell.querySelector('.ads-carousel-dots');
+            const insightPanel = shell.closest('.ads-proof-layout').querySelector(`[data-carousel-insight="${type}"]`);
             track.innerHTML = cards.map(card => createMetricCard(card, isVideo)).join('');
             dots.innerHTML = cards.map((_, index) =>
                 `<button type="button" class="ads-carousel-dot${index === 0 ? ' is-active' : ''}" data-slide="${index}" aria-label="البطاقة ${index + 1}"></button>`
@@ -1605,6 +1690,7 @@ button[onclick*="github"],
             const currentIndex = () => Math.min(cards.length - 1, Math.max(0, Math.round(viewport.scrollLeft / stepSize())));
             const syncDots = () => {
                 const active = currentIndex();
+                renderCarouselInsight(insightPanel, cards[active], active, isVideo);
                 dots.querySelectorAll('.ads-carousel-dot').forEach((dot, index) => {
                     dot.classList.toggle('is-active', index === active);
                     dot.setAttribute('aria-current', index === active ? 'true' : 'false');
@@ -1626,6 +1712,7 @@ button[onclick*="github"],
                 if (button) goTo(Number(button.dataset.slide));
             });
             viewport.addEventListener('scroll', syncDots, { passive: true });
+            renderCarouselInsight(insightPanel, cards[0], 0, isVideo);
             window.addEventListener('resize', syncDots);
             shell.addEventListener('mouseenter', () => { paused = true; });
             shell.addEventListener('mouseleave', () => { paused = window.matchMedia('(prefers-reduced-motion: reduce)').matches; });
